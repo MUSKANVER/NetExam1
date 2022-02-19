@@ -1,0 +1,318 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.22000}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\ul\b\f0\fs22\lang9 Ques-WebApi\par
+\ulnone\b0\par
+using System;\par
+using System.Collections.Generic;\par
+using System.Data.SqlClient;\par
+using System.Linq;\par
+using System.Net;\par
+using System.Net.Http;\par
+using System.Web.Http;\par
+\par
+namespace ProductApi.Controllers\par
+\{\par
+    public class ProductController : ApiController\par
+    \{\par
+        // GET: api/Product\par
+        public IEnumerable<Product> Get()\par
+        \{\par
+            List<Product> lst = new List<Product>();\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.Text;\par
+            cmd.CommandText = "select * from Products";\par
+            SqlDataReader dr = cmd.ExecuteReader();\par
+            while (dr.Read())\par
+            \{\par
+                lst.Add(new Product \{ ProductId = (int)dr["ProductId"], ProductName = (string)dr["ProductName"], Rate = (decimal)dr["Rate"], Description = (string)dr["Description"], CategoryName = (string)dr["CategoryName"] \});\par
+            \}\par
+            return lst;\par
+            // return new string[] \{ "value1", "value2" \};\par
+        \}\par
+\par
+        // GET: api/Product/5\par
+        public Product Get(int id)\par
+        \{\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "Details";\par
+            cmd.Parameters.AddWithValue("@ProductId", id);\par
+            SqlDataReader dr = cmd.ExecuteReader();\par
+            Product p = new Product();\par
+            while (dr.Read())\par
+            \{\par
+                p = new Product \{ ProductId = (int)dr["ProductId"], ProductName = (string)dr["ProductName"], Rate = (decimal)dr["Rate"], Description = (string)dr["Description"], CategoryName = (string)dr["CategoryName"] \};\par
+            \}\par
+            // return View(lst);\par
+\par
+            return p;\par
+\par
+            //return "value";\par
+        \}\par
+\par
+        // POST: api/Product\par
+        public void Post([FromBody]Product p)\par
+        \{\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "insertProduct";\par
+            cmd.Parameters.AddWithValue("@ProductId", p.ProductId);\par
+            cmd.Parameters.AddWithValue("@ProductName", p.ProductName);\par
+            cmd.Parameters.AddWithValue("@Rate", p.Rate);\par
+            cmd.Parameters.AddWithValue("@description", p.Description);\par
+            cmd.Parameters.AddWithValue("@CategoryName", p.CategoryName);\par
+            cmd.ExecuteNonQuery();\par
+        \}\par
+\par
+        // PUT: api/Product/5\par
+        public void Put(int id, [FromBody]Product p)\par
+        \{\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "updateProduct";\par
+            cmd.Parameters.AddWithValue("@ProductId", id);\par
+            cmd.Parameters.AddWithValue("@ProductName", p.ProductName);\par
+            cmd.Parameters.AddWithValue("@Rate", p.Rate);\par
+            cmd.Parameters.AddWithValue("@description", p.Description);\par
+            cmd.Parameters.AddWithValue("@CategoryName", p.CategoryName);\par
+            cmd.ExecuteNonQuery();\par
+        \}\par
+\par
+        // DELETE: api/Product/5\par
+        public void Delete(int id)\par
+        \{\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "DeleteProduct";\par
+            cmd.Parameters.AddWithValue("@ProductId", id);\par
+\par
+            cmd.ExecuteNonQuery();\par
+\par
+\par
+            //return RedirectToAction("Index");\par
+\par
+        \}\par
+    \}\par
+\}\par
+\par
+\par
+\par
+\par
+\par
+\b Ques-Mvc\par
+\par
+\par
+using Products.Models;\par
+using System;\par
+using System.Collections.Generic;\par
+using System.Data.SqlClient;\par
+using System.Linq;\par
+using System.Web;\par
+using System.Web.Mvc;\par
+\par
+namespace Products.Controllers\par
+\{\par
+    public class ProductController : Controller\par
+    \{\par
+        // GET: Product\par
+        public ActionResult Index()\par
+        \{\par
+            List<Product> lst = new List<Product>();\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.Text;\par
+            cmd.CommandText = "select * from Products";\par
+\par
+            SqlDataReader dr = cmd.ExecuteReader();\par
+            while (dr.Read())\par
+            \{\par
+                lst.Add(new Product \{ ProductId = (int)dr["ProductId"], ProductName = (string)dr["ProductName"], Rate = (decimal)dr["Rate"], Description = (string)dr["Description"], CategoryName = (string)dr["CategoryName"] \});\par
+            \}\par
+            return View(lst);\par
+        \}\par
+        public ActionResult Home()\par
+        \{\par
+            return View();\par
+        \}\par
+\par
+        // GET: Product/Details/5\par
+        public ActionResult Details(int id)\par
+        \{\par
+           // List<Product> lst = new List<Product>();\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "Details";\par
+            cmd.Parameters.AddWithValue("@ProductId", id);\par
+            SqlDataReader dr = cmd.ExecuteReader();\par
+            Product p = new Product();\par
+            while (dr.Read())\par
+            \{\par
+                p=new Product \{ ProductId = (int)dr["ProductId"], ProductName = (string)dr["ProductName"], Rate = (decimal)dr["Rate"], Description = (string)dr["Description"], CategoryName = (string)dr["CategoryName"] \};\par
+            \}\par
+           // return View(lst);\par
+\par
+            return View(p);\par
+        \}\par
+\par
+        // GET: Product/Create\par
+        public ActionResult Create()\par
+        \{\par
+            return View();\par
+        \}\par
+\par
+        // POST: Product/Create\par
+        [HttpPost]\par
+        public ActionResult Create(Product p)\par
+        \{\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "insertProduct";\par
+            cmd.Parameters.AddWithValue("@ProductId",p.ProductId);\par
+            cmd.Parameters.AddWithValue("@ProductName", p.ProductName);\par
+            cmd.Parameters.AddWithValue("@Rate", p.Rate);\par
+            cmd.Parameters.AddWithValue("@description", p.Description);\par
+            cmd.Parameters.AddWithValue("@CategoryName", p.CategoryName);\par
+            cmd.ExecuteNonQuery();\par
+            return RedirectToAction("Index");\par
+        \}\par
+\par
+        // GET: Product/Edit/5\par
+        public ActionResult Edit(int id=0)\par
+        \{\par
+            // List<Product> lst = new List<Product>();\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "Details";\par
+            cmd.Parameters.AddWithValue("@ProductId", id);\par
+            SqlDataReader dr = cmd.ExecuteReader();\par
+            Product p = new Product();\par
+            while (dr.Read())\par
+            \{\par
+                p = new Product \{ ProductId = (int)dr["ProductId"], ProductName = (string)dr["ProductName"], Rate = (decimal)dr["Rate"], Description = (string)dr["Description"], CategoryName = (string)dr["CategoryName"] \};\par
+            \}\par
+            // return View(lst);\par
+\par
+            return View(p);\par
+        \}\par
+\par
+        // POST: Product/Edit/5\par
+        [HttpPost]\par
+        public ActionResult Edit(int id, Product p)\par
+        \{\par
+            try\par
+            \{\par
+                // List<Product> lst = new List<Product>();\par
+                SqlConnection sc = new SqlConnection();\par
+                sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+                sc.Open();\par
+                SqlCommand cmd = new SqlCommand();\par
+                cmd.Connection = sc;\par
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+                cmd.CommandText = "updateProduct";\par
+                cmd.Parameters.AddWithValue("@ProductId", id);\par
+                cmd.Parameters.AddWithValue("@ProductName",p.ProductName);\par
+                cmd.Parameters.AddWithValue("@Rate", p.Rate);\par
+                cmd.Parameters.AddWithValue("@description", p.Description);\par
+                cmd.Parameters.AddWithValue("@CategoryName", p.CategoryName);\par
+                cmd.ExecuteNonQuery();\par
+\par
+\par
+                return RedirectToAction("Index");\par
+            \}\par
+            catch\par
+            \{\par
+                return View();\par
+            \}\par
+        \}\par
+\par
+        // GET: Product/Delete/5\par
+        public ActionResult Delete(int id)\par
+        \{\par
+            // List<Product> lst = new List<Product>();\par
+            SqlConnection sc = new SqlConnection();\par
+            sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+            sc.Open();\par
+            SqlCommand cmd = new SqlCommand();\par
+            cmd.Connection = sc;\par
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+            cmd.CommandText = "Details";\par
+            cmd.Parameters.AddWithValue("@ProductId", id);\par
+            SqlDataReader dr = cmd.ExecuteReader();\par
+            Product p = new Product();\par
+            while (dr.Read())\par
+            \{\par
+                p = new Product \{ ProductId = (int)dr["ProductId"], ProductName = (string)dr["ProductName"], Rate = (decimal)dr["Rate"], Description = (string)dr["Description"], CategoryName = (string)dr["CategoryName"] \};\par
+            \}\par
+            // return View(lst);\par
+\par
+            return View(p);\par
+        \}\par
+\par
+        // POST: Product/Delete/5\par
+        [HttpPost]\par
+        public ActionResult Delete(int id,Product p )\par
+        \{\par
+            try\par
+            \{\par
+                // List<Product> lst = new List<Product>();\par
+                SqlConnection sc = new SqlConnection();\par
+                sc.ConnectionString = @"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Products;Integrated Security=True";\par
+                sc.Open();\par
+                SqlCommand cmd = new SqlCommand();\par
+                cmd.Connection = sc;\par
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;\par
+                cmd.CommandText = "DeleteProduct";\par
+                cmd.Parameters.AddWithValue("@ProductId", id);\par
+               \par
+                cmd.ExecuteNonQuery();\par
+\par
+\par
+                return RedirectToAction("Index");\par
+\par
+               // return RedirectToAction("Index");\par
+            \}\par
+            catch\par
+            \{\par
+                return View();\par
+            \}\par
+        \}\par
+    \}\par
+\}\par
+\par
+}
+ 
